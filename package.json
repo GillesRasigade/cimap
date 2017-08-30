@@ -44,6 +44,7 @@
     "chpr-logger": "2.4.1",
     "chpr-metrics": "1.1.0",
     "commander": "^2.9.0",
+    "eslint-plugin-metrics": "^1.0.0",
     "express": "4.15.4",
     "lodash": "4.17.4",
     "nedb": "1.8.0",

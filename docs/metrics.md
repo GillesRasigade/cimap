@@ -2,4 +2,6 @@
 
 Metric | Type | Comment |
 ---: | --- | --- |
-`start` | increment | Incremented each time the application start
+`stopped.${err ? 'error' : 'success'}` | increment | Error or success app
+`crashed` | increment | App crashed
+`started` | increment | App started

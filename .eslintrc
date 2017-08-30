@@ -4,7 +4,12 @@
     "node": true,
     "es6": true
   },
+  "plugins": [
+    "metrics"
+  ],
   "rules": {
+    "metrics/metrics-definition": 2,
+    "metrics/metrics-documentation": 2,
     "no-alert": 0,
     "no-array-constructor": 2,
     "no-bitwise": 2,

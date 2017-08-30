@@ -30,12 +30,14 @@ export const stop = (proc, code, err) => {
     .then(() => {
       logger.info({ code }, 'Application stopped');
       setTimeout(() => {
+        // @metric `stopped.${err ? 'error' : 'success'}` Error or success app
         metric.increment(`stopped.${err ? 'error' : 'success'}`);
         process.exit(err ? 1 : 0);
       }, config.exitTimeout);
     })
     .catch(err => {
       logger.error({ err, code }, 'Application crashed');
+      // @metric crashed App crashed
       metric.increment('crashed');
       setTimeout(() => {
         process.exit(1);
@@ -63,6 +65,7 @@ export const start = async (proc, ...args) => {
   await PROCESSES[proc].start.apply(null, args);
 
   logger.info({ proc, args }, 'Application started');
+  // @metric started App started
   metric.increment('started');
 };
 
