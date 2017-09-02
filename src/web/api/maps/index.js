@@ -21,6 +21,24 @@ export async function create(req, res, next) {
 }
 
 /**
+ * Find all maps
+ *
+ * @export
+ * @param {Object} req
+ * @param {Object} res
+ * @param {function} next
+ */
+export async function find(req, res, next) {
+  try {
+    const list = await maps.find();
+
+    res.json(list);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * Get a map definition
  *
  * @export
@@ -31,6 +49,31 @@ export async function create(req, res, next) {
 export async function get(req, res, next) {
   try {
     const map = await maps.get(req.params.id);
+
+    if (map === null) {
+      return res.status(404).json({
+        code: 404,
+        message: 'Map not found'
+      });
+    }
+
+    res.json(map);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * Remove a map
+ *
+ * @export
+ * @param {Object} req
+ * @param {Object} res
+ * @param {function} next
+ */
+export async function remove(req, res, next) {
+  try {
+    const map = await maps.remove(req.params.id);
 
     if (map === null) {
       return res.status(404).json({
@@ -122,7 +165,9 @@ export default function register() {
   const router = createRouter();
 
   router.post('/', create);
+  router.get('/', find);
   router.get('/:id', get);
+  router.delete('/:id', remove);
   router.put('/:id/update-map', setMapUrl);
   router.post('/:id/builds', addBuilds);
   router.get('/:id/builds', getBuilds);

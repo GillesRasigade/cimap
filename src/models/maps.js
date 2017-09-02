@@ -21,6 +21,16 @@ export async function create() {
 }
 
 /**
+ * Get all
+ *
+ * @export
+ * @returns {Promise}
+ */
+export async function find(query = {}) {
+  return db.maps.findAsync(query);
+}
+
+/**
  * Get map by `_id`
  *
  * @export
@@ -29,6 +39,29 @@ export async function create() {
  */
 export function get(_id) {
   return db.maps.findOneAsync({ _id });
+}
+
+/**
+ * Delete a map
+ *
+ * @export
+ * @param {String} _id
+ * @returns {Promise}
+ */
+export async function remove(_id) {
+  const map = await get(_id);
+
+  if (map === null) {
+    return null;
+  }
+
+  const res = await db.maps.removeAsync({ _id });
+
+  if (res === 1) {
+    return map;
+  }
+
+  throw new Error('Failed to remove the map');
 }
 
 /**
@@ -95,5 +128,7 @@ export default {
   create,
   get,
   getBuilds,
+  find,
+  remove,
   setMapUrl
 };

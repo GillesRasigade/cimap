@@ -10,6 +10,19 @@ const PLATFORMS = {
 };
 
 /**
+ * Insert or update an existing build
+ *
+ * @export
+ * @param {Object} build
+ * @returns {Promise}
+ */
+export async function insertOrUpdate(build) {
+  return await db.builds.updateAsync(_.pick(build, 'name'), {
+    $set: build
+  }, { upsert: true });
+}
+
+/**
  * Sync builds from a given Continuous Integration platform.
  *
  * @static
@@ -29,9 +42,7 @@ export async function sync(ci, interval = 0) {
     };
 
     logger.debug({ build: build.name }, 'Update build');
-    await db.builds.updateAsync(_.pick(build, 'name'), {
-      $set: build
-    }, { upsert: true });
+    await insertOrUpdate(build);
   }
 
   if (interval) {
@@ -50,6 +61,17 @@ export async function syncAll(interval) {
 }
 
 /**
+ * Get map by `_id`
+ *
+ * @export
+ * @param {String} _id
+ * @returns {Promise}
+ */
+export function get(_id) {
+  return db.builds.findOneAsync({ _id });
+}
+
+/**
  * Return a build from its repository name
  *
  * @export
@@ -60,8 +82,19 @@ export function findByName(name) {
   return db.builds.findOneAsync({ name });
 }
 
+export async function addDependency(_id, name) {
+  const dependencies = [];
+  const build = await get(_id);
+  console.log(build);
+
+  // Find recursively dependencies and stop on first loop detection:
+  //
+}
+
 export default {
   findByName,
+  get,
+  insertOrUpdate,
   sync,
   syncAll
 };
