@@ -132,11 +132,6 @@ export async function updateBuild(_id, build) {
   });
 
   await db.maps.updateAsync({ _id }, map);
-  // const elem = await db.maps.findOneAsync({
-  //   builds: {
-  //     $elemMatch: { name: build.name }
-  //   }
-  // });
 
   return get(_id);
 }
