@@ -93,17 +93,50 @@ export async function setMapUrl(_id, url) {
 export async function addBuilds(_id, names) {
   const list = await Promise.all(_.map(names, name => builds.findByName(name)));
 
+  const map = await get(_id);
+
   for (const build of list) {
-    if (!build) {
+    if (!build || _.find(map.builds, { name: build.name })) {
       continue;
     }
 
     await db.maps.updateAsync({ _id }, {
       $addToSet: {
-        builds: build.name
+        builds: {
+          name: build.name
+        }
       }
     });
   }
+
+  return get(_id);
+}
+
+/**
+ * Update build information for a map
+ *
+ * @export
+ * @param {String} _id
+ * @param {String} build
+ * @returns {Promise}
+ */
+export async function updateBuild(_id, build) {
+  const map = await get(_id);
+
+  map.builds = _.map(map.builds, b => {
+    if (b.name === build.name) {
+      return build;
+    }
+
+    return b;
+  });
+
+  await db.maps.updateAsync({ _id }, map);
+  // const elem = await db.maps.findOneAsync({
+  //   builds: {
+  //     $elemMatch: { name: build.name }
+  //   }
+  // });
 
   return get(_id);
 }
@@ -130,5 +163,6 @@ export default {
   getBuilds,
   find,
   remove,
-  setMapUrl
+  setMapUrl,
+  updateBuild
 };

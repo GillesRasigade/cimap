@@ -156,6 +156,26 @@ export async function getBuilds(req, res, next) {
 }
 
 /**
+ * Update a build from a map
+ *
+ * @export
+ * @param {Object} req
+ * @param {Object} res
+ * @param {function} next
+ */
+export async function updateBuild(req, res, next) {
+  try {
+    const map = await maps.updateBuild(req.params.id, Object.assign(req.body, {
+      name: req.params.name
+    }));
+
+    res.json(map);
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
  * Controllers registration function
  *
  * @export
@@ -170,6 +190,7 @@ export default function register() {
   router.delete('/:id', remove);
   router.put('/:id/update-map', setMapUrl);
   router.post('/:id/builds', addBuilds);
+  router.put('/:id/builds/:name', updateBuild);
   router.get('/:id/builds', getBuilds);
 
   return router;
