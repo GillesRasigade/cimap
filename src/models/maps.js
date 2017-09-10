@@ -113,6 +113,28 @@ export async function addBuilds(_id, names) {
 }
 
 /**
+ * Remove builds from the map
+ *
+ * @export
+ * @param {String} _id
+ * @param {String[]} names
+ * @returns {Promise}
+ */
+export async function removeBuilds(_id, names) {
+  const map = await get(_id);
+
+  map.builds = map.builds.filter(build => names.indexOf(build.name) === -1);
+
+  await db.maps.updateAsync({ _id }, {
+    $set: {
+      builds: map.builds
+    }
+  });
+
+  return get(_id);
+}
+
+/**
  * Update build information for a map
  *
  * @export
@@ -158,6 +180,7 @@ export default {
   getBuilds,
   find,
   remove,
+  removeBuilds,
   setMapUrl,
   updateBuild
 };
