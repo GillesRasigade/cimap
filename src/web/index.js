@@ -20,7 +20,7 @@ async function start() {
     return Promise.resolve(server);
   }
 
-  logger.debug('Express web server creation');
+  logger.info('Express web server creation');
   const app = configure(express());
   server = http.createServer(app);
 
