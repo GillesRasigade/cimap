@@ -146,7 +146,7 @@ export async function updateBuild(_id, build) {
 export async function getBuilds(_id) {
   const map = await get(_id);
 
-  const list = await Promise.all(_.map(map.builds, name => builds.findByName(name)));
+  const list = await Promise.all(_.map(map.builds, ({ name }) => builds.findByName(name)));
 
   return _.filter(list);
 }
