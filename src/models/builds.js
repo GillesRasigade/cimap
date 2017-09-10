@@ -38,7 +38,8 @@ export async function sync(ci, interval = 0) {
     const build = {
       name: project.reponame,
       ci,
-      status: builds[0].status === 'success' ? 'success' : 'failed'
+      status: builds[0].outcome === 'success' ? 'success' : 'failed',
+      url: project.vcs_url
     };
 
     logger.debug({ build: build.name }, 'Update build');
