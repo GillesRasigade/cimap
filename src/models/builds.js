@@ -125,7 +125,6 @@ export async function addDependency(node, name) {
   const dependencies = await getDependencies(dep);
 
   if (dependencies.indexOf(build.name) !== -1) {
-    console.log(`${name} deps: ${dependencies} with ${build.name}`);
     throw new Error('Cyclic dependency detected');
   }
 
