@@ -1,4 +1,5 @@
 import { promisify } from 'util';
+import { watchFile } from 'fs';
 
 import _ from 'lodash';
 import Datastore from 'nedb';
@@ -16,6 +17,13 @@ const db = _.mapValues(config.nedb.collections, options => {
       store[`${prop}Async`] = promisify(store[prop].bind(store));
     }
   }
+
+  /**
+   * Watch the datastore file to automatic  reload
+   */
+  watchFile(store.filename, async () => {
+    await store.loadDatabaseAsync();
+  });
 
   return store;
 });
