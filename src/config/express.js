@@ -63,6 +63,16 @@ export function configure(app) {
     next();
   });
 
+  // Global token access
+  app.use((req, res, next) => {
+    const { token } = req.query;
+    if (config.tokens.indexOf(token) === -1) {
+      return res.status(403).send('Forbidden');
+    }
+
+    next();
+  });
+
   app.set('port', config.port);
 
   app.postConfig = () => post(app);
