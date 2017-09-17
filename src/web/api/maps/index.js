@@ -109,7 +109,12 @@ export async function setMapUrl(req, res, next) {
       });
     }
 
-    const map = await maps.setMapUrl(req.params.id, req.body.map_url);
+    const map = await maps.setMapUrl(
+      req.params.id,
+      req.body.map_url,
+      req.body.width,
+      req.body.height
+    );
 
     res.json(map);
   } catch (err) {

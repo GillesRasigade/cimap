@@ -1,4 +1,5 @@
 import bodyParser from 'body-parser';
+import _ from 'lodash';
 
 import config from '../config';
 
@@ -58,14 +59,18 @@ export function configure(app) {
 
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Request-Token');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    if (req.method == 'OPTIONS') {
+      return res.send();
+    }
+
     next();
   });
 
   // Global token access
   app.use((req, res, next) => {
-    const { token } = req.query;
+    const token = _.get(req, 'query.token', req.header('x-request-token'));
     if (config.tokens.indexOf(token) === -1) {
       return res.status(403).send('Forbidden');
     }

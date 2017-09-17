@@ -1,4 +1,7 @@
+import mongodb from '../src/helpers/mongodb';
+
 before(async () => {
+  await mongodb.connect();
   // Write before all tests hooks here
 });
 

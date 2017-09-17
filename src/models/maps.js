@@ -1,8 +1,31 @@
+import { ObjectID } from 'mongodb';
 import _ from 'lodash';
 
-import db from '../helpers/nedb';
+import { cimap as db } from '../helpers/mongodb';
 
 import builds from './builds';
+
+/**
+ * CONFIGURATION
+ */
+export const DATABASE = 'cimap';
+export const COLLECTION = 'maps';
+export const COLLECTION_OPTIONS = {};
+export const VALIDATOR_SCHEMA = null;
+/**
+ * @see http://mongodb.github.io/node-mongodb-native/2.2/api/Collection.html#ensureIndex
+ */
+export const INDICES = null;
+
+/**
+ * Return the model collection
+ *
+ * @export
+ * @returns {Object}
+ */
+export function collection() {
+  return db.collection(COLLECTION);
+}
 
 /**
  * Create a new map
@@ -12,12 +35,12 @@ import builds from './builds';
  * @returns {Promise}
  */
 export async function create() {
-  const map = await db.maps.insertAsync({
+  const res = await collection().insert({
     map_url: null,
     builds: []
   });
 
-  return map;
+  return res.ops[0];
 }
 
 /**
@@ -27,7 +50,7 @@ export async function create() {
  * @returns {Promise}
  */
 export async function find(query = {}) {
-  return db.maps.findAsync(query);
+  return collection().find(query).toArray();
 }
 
 /**
@@ -38,7 +61,9 @@ export async function find(query = {}) {
  * @returns {Promise}
  */
 export function get(_id) {
-  return db.maps.findOneAsync({ _id });
+  return collection().findOne({
+    _id: new ObjectID(_id)
+  });
 }
 
 /**
@@ -55,7 +80,9 @@ export async function remove(_id) {
     return null;
   }
 
-  const res = await db.maps.removeAsync({ _id });
+  const res = await collection().remove({
+    _id: new ObjectID(_id)
+  });
 
   if (res === 1) {
     return map;
@@ -72,10 +99,14 @@ export async function remove(_id) {
  * @param {String} url
  * @returns {Promise}
  */
-export async function setMapUrl(_id, url) {
-  await db.maps.updateAsync({ _id }, {
+export async function setMapUrl(_id, url, width, height) {
+  await collection().update({
+    _id: new ObjectID(_id)
+  }, {
     $set: {
-      map_url: url
+      map_url: url,
+      width,
+      height
     }
   });
 
@@ -100,7 +131,9 @@ export async function addBuilds(_id, names) {
       continue;
     }
 
-    await db.maps.updateAsync({ _id }, {
+    await collection().update({
+      _id: new ObjectID(_id)
+    }, {
       $addToSet: {
         builds: {
           name: build.name
@@ -125,7 +158,9 @@ export async function removeBuilds(_id, names) {
 
   map.builds = map.builds.filter(build => names.indexOf(build.name) === -1);
 
-  await db.maps.updateAsync({ _id }, {
+  await collection().update({
+    _id: new ObjectID(_id)
+  }, {
     $set: {
       builds: map.builds
     }
@@ -153,7 +188,9 @@ export async function updateBuild(_id, build) {
     return b;
   });
 
-  await db.maps.updateAsync({ _id }, map);
+  await collection().update({
+    _id: new ObjectID(_id)
+  }, map);
 
   return get(_id);
 }
@@ -175,6 +212,7 @@ export async function getBuilds(_id) {
 
 export default {
   addBuilds,
+  collection,
   create,
   get,
   getBuilds,

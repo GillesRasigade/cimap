@@ -1,13 +1,36 @@
+import { ObjectID } from 'mongodb';
 import _ from 'lodash';
 import logger from 'chpr-logger';
 
-import db from '../helpers/nedb';
+import { cimap as db } from '../helpers/mongodb';
 
 import circleci from '../services/circleci';
 
 const PLATFORMS = {
   circleci
 };
+
+/**
+ * CONFIGURATION
+ */
+export const DATABASE = 'cimap';
+export const COLLECTION = 'builds';
+export const COLLECTION_OPTIONS = {};
+export const VALIDATOR_SCHEMA = null;
+/**
+ * @see http://mongodb.github.io/node-mongodb-native/2.2/api/Collection.html#ensureIndex
+ */
+export const INDICES = null;
+
+/**
+ * Return the model collection
+ *
+ * @export
+ * @returns {Object}
+ */
+export function collection() {
+  return db.collection(COLLECTION);
+}
 
 /**
  * Insert or update an existing build
@@ -17,7 +40,7 @@ const PLATFORMS = {
  * @returns {Promise}
  */
 export async function insertOrUpdate(build) {
-  return await db.builds.updateAsync(_.pick(build, 'name'), {
+  return await collection().update(_.pick(build, 'name'), {
     $set: build
   }, { upsert: true });
 }
@@ -95,7 +118,9 @@ export async function syncAll(interval) {
  * @returns {Promise}
  */
 export function get(_id) {
-  return db.builds.findOneAsync({ _id });
+  return collection().findOne({
+    _id: new ObjectID(_id)
+  });
 }
 
 /**
@@ -106,7 +131,7 @@ export function get(_id) {
  * @returns {Promise}
  */
 export function findByName(name) {
-  return db.builds.findOneAsync({ name });
+  return collection().findOne({ name });
 }
 
 /**
@@ -163,6 +188,7 @@ export async function addDependency(node, name) {
 
 export default {
   addDependency,
+  collection,
   findByName,
   get,
   insertOrUpdate,

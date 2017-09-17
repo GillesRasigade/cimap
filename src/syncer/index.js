@@ -1,5 +1,7 @@
 import logger from 'chpr-logger';
 
+import config from '../config';
+import mongodb from '../helpers/mongodb';
 import builds from '../models/builds';
 
 /**
@@ -10,7 +12,10 @@ import builds from '../models/builds';
 async function start() {
   logger.debug('Syncer worker creation');
 
-  await builds.syncAll();
+  logger.info('Mongodb connection');
+  await mongodb.connect();
+
+  await builds.syncAll(config.defaultSynchronizationInterval * 1000);
 }
 
 /**
@@ -19,6 +24,9 @@ async function start() {
  * @returns
  */
 async function stop() {
+  await mongodb.disconnect();
+  logger.info('Mongodb disconnected');
+
   return Promise.resolve();
 }
 
