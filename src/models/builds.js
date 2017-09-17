@@ -23,6 +23,31 @@ export async function insertOrUpdate(build) {
 }
 
 /**
+ * Compute the stability of the tests
+ *
+ * @export
+ * @param {Object} branches
+ * @returns {Number}
+ */
+export function stability(branches) {
+  let count = 0;
+  let failed = 0;
+  for (const branch in branches) {
+    const builds = branches[branch].recent_builds;
+    if (!builds) {
+      count = 1;
+      failed = 1;
+      continue;
+    }
+
+    count += builds.length;
+    failed += _.filter(builds, { outcome: 'failed'}).length;
+  }
+
+  return Math.round((count - failed) / count * 100);
+}
+
+/**
  * Sync builds from a given Continuous Integration platform.
  *
  * @static
@@ -39,6 +64,7 @@ export async function sync(ci, interval = 0) {
       name: project.reponame,
       ci,
       status: builds[0].outcome === 'success' ? 'success' : 'failed',
+      stability: stability(project.branches),
       url: project.vcs_url
     };
 

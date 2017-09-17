@@ -32,7 +32,11 @@ export async function find(req, res, next) {
   try {
     const list = await maps.find();
 
-    res.json(list);
+    res.json(list.map(map => ({
+      _id: map._id,
+      map_url: map.map_url,
+      builds: map.builds.length
+    })));
   } catch (err) {
     next(err);
   }
