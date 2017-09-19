@@ -63,8 +63,8 @@ export function stability(branches) {
       continue;
     }
 
-    count += builds.length;
-    failed += _.filter(builds, { outcome: 'failed'}).length;
+    count++;
+    failed += _.get(builds, '0', { outcome: 'success' }).outcome === 'failed' ? 1 : 0;
   }
 
   return Math.round((count - failed) / count * 100);
