@@ -59,7 +59,7 @@ export function stability(branches) {
     const builds = branches[branch].recent_builds;
     if (!builds) {
       count = 1;
-      failed = 1;
+      failed = 0;
       continue;
     }
 
