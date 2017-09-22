@@ -50,24 +50,31 @@ export async function insertOrUpdate(build) {
  *
  * @export
  * @param {Object} branches
- * @returns {Number}
+ * @returns {Object} result
  */
 export function stability(branches) {
-  let count = 0;
-  let failed = 0;
+  let buildsCount = 0;
+  let branchesCount = 0;
+  let branchesFailedCount = 0;
   for (const branch in branches) {
     const builds = branches[branch].recent_builds;
     if (!builds) {
-      count = 0;
-      failed = 0;
+      branchesFailedCount = 0;
+      branchesFailedCount = 0;
       continue;
     }
 
-    count++;
-    failed += _.get(builds, '0', { outcome: 'success' }).outcome === 'failed' ? 1 : 0;
+    branchesCount++;
+    branchesFailedCount += _.get(builds, '0', { outcome: 'success' }).outcome === 'failed' ? 1 : 0;
+    buildsCount += builds.length;
   }
 
-  return Math.round((count - failed) / count * 100);
+  return {
+    stability: Math.round((branchesCount - branchesFailedCount) / branchesCount * 100),
+    branches_count: branchesCount,
+    branches_failed_count: branchesFailedCount,
+    builds_count: buildsCount
+  };
 }
 
 /**
@@ -87,7 +94,8 @@ export async function sync(ci, interval = 0) {
       name: project.reponame,
       ci,
       status: builds[0].outcome === 'success' ? 'success' : 'failed',
-      stability: stability(project.branches),
+      ...stability(project.branches),
+      recent_builds_count: _.map,
       url: project.vcs_url
     };
 
