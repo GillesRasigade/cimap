@@ -1,6 +1,6 @@
 import { Router as createRouter } from 'express';
 
-import maps from '../../../models/maps';
+import maps from '~/models/maps';
 
 /**
  * Create a new map
@@ -33,7 +33,7 @@ export async function find(req, res, next) {
     const list = await maps.find();
 
     res.json(list.map(map => ({
-      _id: map._id,
+      _id: map._id, // eslint-disable-line no-underscore-dangle
       map_url: map.map_url,
       builds: map.builds.length
     })));

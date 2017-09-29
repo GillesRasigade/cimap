@@ -3,9 +3,9 @@ import http from 'http';
 import express from 'express';
 import logger from 'chpr-logger';
 
-import config from '../config';
-import mongodb from '../helpers/mongodb';
-import { configure } from '../config/express';
+import config from '~/config';
+import mongodb from '~/helpers/mongodb';
+import { configure } from '~/config/express';
 
 import api from './api';
 

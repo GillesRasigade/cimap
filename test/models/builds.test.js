@@ -1,9 +1,8 @@
 import { expect } from 'chai';
-import db from '../../src/helpers/nedb';
-import builds from '../../src/models/builds';
+import builds from '~/models/builds';
 
-describe.only('models/builds', () => {
-  afterEach(async () => {
+describe('models/builds', () => {
+  beforeEach(async () => {
     await builds.collection().remove({}, { multi: true });
   });
 
@@ -11,5 +10,12 @@ describe.only('models/builds', () => {
     const build = await builds.insertOrUpdate({
       name: 'test'
     });
+
+    expect(build).to.have.nested.property('result.n', 1);
+    expect(build).to.have.nested.property('result.nModified', 0);
+
+    expect(build).to.have.nested.property('result.upserted');
+    const upserted = build.result.upserted.shift();
+    expect(upserted).to.have.property('_id');
   });
 });

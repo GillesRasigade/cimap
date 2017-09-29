@@ -1,6 +1,6 @@
 import { Router as createRouter } from 'express';
 
-import builds from '../../../models/builds';
+import builds from '~/models/builds';
 
 /**
  * Return a specific build

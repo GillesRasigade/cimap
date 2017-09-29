@@ -4,8 +4,8 @@ import 'babel-polyfill';
 import logger from 'chpr-logger';
 import metric from 'chpr-metrics';
 
-import config from './config';
-import PROCESSES from './processes';
+import config from '~/config';
+import PROCESSES from '~/processes';
 
 /**
  * Main application stopping process

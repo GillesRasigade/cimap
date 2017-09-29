@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { expect } from 'chai';
 
-import web from '../../../../../src/web';
+import web from '~/web';
 
 describe('/api/examples/errors', () => {
   let app;
@@ -15,7 +15,9 @@ describe('/api/examples/errors', () => {
 
   describe('/throw', () => {
     it('returns a 500 response status with valid error object', async () => {
-      const { body, status } = await request(app).get('/api/examples/errors/throw');
+      const { body, status } = await request(app)
+        .get('/api/examples/errors/throw')
+        .query({ token: 'dummy' });
 
       expect(status).to.equal(500);
       expect(body).to.deep.equal({
@@ -27,7 +29,9 @@ describe('/api/examples/errors', () => {
 
   describe('/next', () => {
     it('returns a 500 response status with valid error object', async () => {
-      const { body, status } = await request(app).get('/api/examples/errors/next');
+      const { body, status } = await request(app)
+        .get('/api/examples/errors/next')
+        .query({ token: 'dummy' });
 
       expect(status).to.equal(500);
       expect(body).to.deep.equal({
@@ -41,6 +45,7 @@ describe('/api/examples/errors', () => {
     it('returns a 500 response status with valid error object', async () => {
       const { body, status } = await request(app)
         .get('/api/examples/errors/async')
+        .query({ token: 'dummy' })
         .query({ timeout: 50 });
 
       expect(status).to.equal(500);
@@ -63,6 +68,7 @@ describe('/api/examples/errors', () => {
       try {
         await request(app)
           .get('/api/examples/errors/unhandled_rejection')
+          .query({ token: 'dummy' })
           .timeout(50);
       } catch (error) {
         expect(error.message).to.equal('Timeout of 50ms exceeded');

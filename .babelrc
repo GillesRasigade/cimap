@@ -1,6 +1,12 @@
 {
   "presets": [
-    "es2015",
-    "stage-0"
+    "node8"
+  ],
+  "plugins": [
+    ["module-resolver", {
+      "alias": {
+        "~": "./src"
+      }
+    }]
   ]
 }

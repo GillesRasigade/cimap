@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { expect } from 'chai';
 
-import web from '../../src/web';
+import web from '~/web';
 
 describe('/heartbeat', () => {
   afterEach(async () => {

@@ -4,7 +4,16 @@
     "node": true,
     "es6": true
   },
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  },
+  "plugins": [
+    "import"
+  ],
   "rules": {
+    "import/no-unresolved": 2,
     "no-alert": 0,
     "no-array-constructor": 2,
     "no-bitwise": 2,
